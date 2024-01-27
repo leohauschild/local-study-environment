@@ -1,5 +1,6 @@
 # path local state
 local_state/*
+/argocd/argocd-install/local_state/*
 
 **/.terragrunt-cache/
 
