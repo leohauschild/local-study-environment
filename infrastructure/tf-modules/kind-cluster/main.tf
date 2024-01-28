@@ -24,11 +24,11 @@ resource "kind_cluster" "this" {
         host_port      = 443
       }
     }
-    
+
     dynamic "node" {
       for_each = range(var.workers)
       content {
-           role = "worker"  
+        role = "worker"
       }
     }
   }

@@ -1,0 +1,4 @@
+clusterName: "tools"
+environment: "prod"
+server: "https://kubernetes.default.svc"
+revision: "HEAD"

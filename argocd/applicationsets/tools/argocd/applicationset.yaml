@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata: 
+  name: argocd
+  namespace: argocd
+spec: 
+  generators:
+    - git: 
+        repoURL: https://github.com/leohauschild/local-study-environment.git
+        revision: "HEAD"
+        files: 
+        - path: argocd/clusters/prod.yaml
+  template: 
+    metadata: 
+      name: "argocd-{{ clusterName }}"
+    spec:
+      project: tools
+      sources:
+        - repoURL: https://github.com/leohauschild/local-study-environment.git
+          targetRevision: "{{ revision }}"
+          ref: values	
+        - repoURL: https://argoproj.github.io/argo-helm
+          chart: argo-cd
+          targetRevision: 5.51.6
+          helm:
+            releaseName: argocd
+            valueFiles:
+              - $values/argocd/defaults/argocd/values.yaml
+              - $values/argocd/overrides/{{ clusterName }}/argocd/values.yaml
+        - repoURL: https://github.com/leohauschild/local-study-environment.git 
+          targetRevision: "{{ revision }}"
+          path: argocd/defaults/argocd/manifests
+          directory:
+            recurse: true
+      destination:
+        server: "{{ server }}"
+        namespace: "argocd"
+  syncPolicy:
+    preserveResourcesOnDeletion: true

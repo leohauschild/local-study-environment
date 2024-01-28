@@ -1,5 +1,5 @@
 include {
-    path = find_in_parent_folders()
+  path = find_in_parent_folders()
 }
 
 terraform {
@@ -8,5 +8,5 @@ terraform {
 
 inputs = {
   cluster_name = "prod"
-  workers = 1
+  workers      = 1
 }
