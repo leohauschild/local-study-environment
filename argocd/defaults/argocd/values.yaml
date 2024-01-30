@@ -1,2 +1,12 @@
 crds:
   install: true
+
+server:
+  volumeMounts: 
+    - mountPath: /var/azure
+      name: telematics-token
+
+  volumes:
+    - name: telematics-token
+      secret:
+        secretName: telematics-token 
