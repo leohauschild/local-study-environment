@@ -14,7 +14,7 @@ spec:
     metadata: 
       name: "argocd-{{ clusterName }}"
     spec:
-      project: tools
+      project: default
       sources:
         - repoURL: https://github.com/leohauschild/local-study-environment.git
           targetRevision: "{{ revision }}"
