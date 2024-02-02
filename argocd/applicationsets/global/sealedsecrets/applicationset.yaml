@@ -33,3 +33,5 @@ spec:
       destination:
         server: "{{ server }}"
         namespace: "kube-system" # The standard namespace kubeseal CLI will look for the controller
+  syncPolicy:
+    preserveResourcesOnDeletion: true
