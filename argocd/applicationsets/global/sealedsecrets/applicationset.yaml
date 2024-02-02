@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: sealed-secrets
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: "https://github.com/leohauschild/local-study-environment.git"
+        revision: "HEAD"
+        files:
+          - path: argocd/clusters/prod.yaml
+  template:
+    metadata:
+      name: "sealed-secrets-{{ clusterName }}"
+    spec:
+      project: tools
+
+      sources:
+        - repoURL: "https://github.com/leohauschild/local-study-environment.git"
+          targetRevision: "{{ revision }}"
+          ref: values
+
+        # https://github.com/bitnami-labs/sealed-secrets/tree/helm-v2.14.1/helm/sealed-secrets
+        - repoURL: "https://bitnami-labs.github.io/sealed-secrets"
+          chart: "sealed-secrets"
+          targetRevision: 2.14.1
+          helm:
+            releaseName: sealed-secrets
+            valueFiles:
+              - $values/argocd/defaults/sealedsecrets/values.yaml
+
+      destination:
+        server: "{{ server }}"
+        namespace: "kube-system" # The standard namespace kubeseal CLI will look for the controller
