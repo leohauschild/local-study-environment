@@ -12,7 +12,7 @@ spec:
           - path: argocd/clusters/tools.yaml
   template:
     metadata:
-      name: "sealed-secrets-{{ clusterName }}"
+      name: "sealed-secrets"
     spec:
       project: tools
 
