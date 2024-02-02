@@ -9,7 +9,7 @@ spec:
         repoURL: https://github.com/leohauschild/local-study-environment.git
         revision: "HEAD"
         files: 
-        - path: argocd/clusters/prod.yaml
+        - path: argocd/clusters/tools.yaml
   template: 
     metadata: 
       name: "argocd-{{ clusterName }}"
