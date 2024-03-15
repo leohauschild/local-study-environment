@@ -1,0 +1,25 @@
+defaultRules:
+  create: true
+  rules:
+    etcd: false
+    kubeControllerManager: false
+    kubeProxy: false
+    windows: false
+
+prometheus:
+  enabled: true
+  agentMode: true
+  
+  prometheusSpec:
+    remoteWrite:
+      - url: http://grafana-mimir-gateway.observability.svc.cluster.local/api/v1/push
+        headers:
+          X-Scope-OrgId: tools
+
+    ## Enable/Disable Grafana dashboards provisioning for prometheus remote write feature
+    remoteWriteDashboards: true
+
+grafana:
+  enabled: false
+  forceDeployDashboards: true
+

@@ -8,5 +8,5 @@ terraform {
 
 inputs = {
   cluster_name = "tools"
-  workers      = 1
+  workers      = 2 
 }

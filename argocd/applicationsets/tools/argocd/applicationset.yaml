@@ -8,33 +8,32 @@ spec:
     - git: 
         repoURL: https://github.com/leohauschild/local-study-environment.git
         revision: "HEAD"
-        files: 
+        files:
         - path: argocd/clusters/tools.yaml
-  template: 
-    metadata: 
+  template:
+    metadata:
       name: "argocd-{{ clusterName }}"
     spec:
       project: default
       sources:
         - repoURL: https://github.com/leohauschild/local-study-environment.git
           targetRevision: "{{ revision }}"
-          ref: values	
-        
+          ref: values
+
         - repoURL: https://argoproj.github.io/argo-helm
           chart: argo-cd
-          targetRevision: 5.51.6
+          targetRevision: 6.7.11
           helm:
             releaseName: argocd
             valueFiles:
               - $values/argocd/defaults/argocd/values.yaml
-              - $values/argocd/overrides/{{ clusterName }}/argocd/values.yaml
-        
+
         - repoURL: https://github.com/leohauschild/local-study-environment.git 
           targetRevision: "{{ revision }}"
           path: argocd/defaults/argocd/manifests
           directory:
             recurse: true
-      
+ 
       destination:
         server: "{{ server }}"
         namespace: "argocd"
