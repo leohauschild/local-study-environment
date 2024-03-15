@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: loki
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: "https://github.com/leohauschild/local-study-environment.git"
+        revision: "HEAD"
+        files:
+          - path: argocd/clusters/tools.yaml
+  template:
+    metadata:
+      name: "loki"
+    spec:
+      project: tools
+
+      sources:
+        - repoURL: "https://github.com/leohauschild/local-study-environment.git"
+          targetRevision: "{{ revision }}"
+          ref: values
+
+        - repoURL: "https://grafana.github.io/helm-charts"
+          chart: "loki"
+          targetRevision: 6.5.0
+          helm:
+            releaseName: loki-stack
+            valueFiles:
+              - $values/argocd/defaults/loki/values.yaml
+
+      destination:
+        server: "{{ server }}"
+        namespace: "observability"
+
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+

@@ -1,0 +1,101 @@
+admin-cache:
+  enabled: true
+  replicas: 1
+
+chunks-cache:
+  enabled: false
+  replicas: 1
+
+index-cache:
+  enabled: true
+  replicas: 1
+
+metadata-cache:
+  enabled: true
+
+results-cache:
+  enabled: true
+  replicas: 1
+
+
+overrides_exporter:
+  replicas: 1
+
+enterprise:
+  enabled: false
+
+nginx:
+  enabled: false
+
+alertmanager:
+  enabled: false
+
+compactor:
+  persistentVolume:
+    size: 2Gi
+
+distributor:
+  replicas: 1
+  zoneAwareReplication:
+    enabled: false
+
+ingester:
+  persistentVolume:
+    size: 2Gi
+  replicas: 2
+  zoneAwareReplication:
+    enabled: false
+
+minio:
+  enabled: true
+  mode: standalone
+  rootUser: minio
+  persistence:
+    size: 5Gi
+  resources:
+    requests:
+      cpu: 50m
+      memory: 100Mi
+  rootPassword: supersecret
+  # Changed the mc config path to '/tmp' from '/etc' as '/etc' is only writable by root and OpenShift will not permit this.
+  configPathmc: "/tmp/minio/mc/"
+
+
+querier:
+  replicas: 1
+
+query_frontend:
+  replicas: 1
+  zoneAwareReplication:
+    enabled: false
+
+ruler:
+  replicas: 1
+
+store_gateway:
+  persistentVolume:
+    size: 1Gi
+  replicas: 1
+  zoneAwareReplication:
+    enabled: false
+
+gateway:
+  enabledNonEnterprise: true
+  replicas: 1
+
+metaMonitoring:
+  dashboards:
+    enabled: true
+
+  serviceMonitor:
+    enabled: true
+
+  grafanaAgent:
+    enabled: false
+    installOperator: false
+
+    # Monitored by Prometheus Operator, not GrafanaAgent
+    metrics:
+      enabled: false
+      scrapeK8s:
+        enabled: false

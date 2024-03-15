@@ -1,16 +1,16 @@
-# This file is maintained automatically by "terraform init".
+# This file is maintained automatically by "tofu init".
 # Manual edits may be lost in future updates.
 
-provider "registry.terraform.io/tehcyx/kind" {
-  version     = "0.2.1"
-  constraints = "0.2.1"
+provider "registry.opentofu.org/tehcyx/kind" {
+  version     = "0.9.0"
+  constraints = "0.9.0"
   hashes = [
-    "h1:t6agiLTeQmVK+uQrHt9cbfpjvvtdlq+cnudhlRoTjjM=",
-    "zh:24eb1b94c4669534d6bca1a5d2b0deb9c58989cb31cee9104d2074525faead59",
-    "zh:98541edd176cad90deb2d4d3c596f43e899a9b387afc0957a8c3b9007dcbc335",
-    "zh:a963e39769f126ba9a75b6f186ccc235712bd015dd4071d2b0c2e0c135576850",
-    "zh:c83cce2e837bc386f589d10828cb1c375bc9a6aa377eb15523f3a7852d33480f",
-    "zh:f6477f80e4715a4706403a8a02beefefc9f84f59d27285d81ce5595608ba340d",
-    "zh:ff9f2e35f7efef7cc01b014223049765f4cc5e8d2e55c97a0c8ad310b7fe1c8d",
+    "h1:X+GBBnJ8+0lfprSxOCDG0tRWltXMYlxJDbicE3I8Z4I=",
+    "zh:315628279e657b868565b6d54b892982b27d6db95393d1cac646dd736af208e5",
+    "zh:401922e7844a9579da5dfa17b5a2d558cbff91e666dea013a6007dd117841204",
+    "zh:74665f4532101a2bdf7b6bd19f1f31e76fa13e9ad29149dddccf24e3f0eaae35",
+    "zh:b752c132322445823a754fc6d4fb5d692049805840e4a597fc7cdf73f4a98fbf",
+    "zh:d381786bd7b23b36a7827e48981b37e39128cb980c44a8d474206dc62f94bc00",
+    "zh:e600776e37201ea202e8196954369b084b358c75a69f801470089d1c0d488199",
   ]
 }

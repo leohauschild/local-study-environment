@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: kube-prometheus
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: "https://github.com/leohauschild/local-study-environment.git"
+        revision: "HEAD"
+        files:
+          - path: argocd/clusters/tools.yaml
+  template:
+    metadata:
+      name: "kube-prometheus"
+    spec:
+      project: tools
+
+      sources:
+        - repoURL: "https://github.com/leohauschild/local-study-environment.git"
+          targetRevision: "{{ revision }}"
+          ref: values
+
+        - repoURL: "https://prometheus-community.github.io/helm-charts"
+          chart: "kube-prometheus-stack"
+          targetRevision: 58.2.1
+          helm:
+            releaseName: kube-prometheus
+            valueFiles:
+              - $values/argocd/defaults/kube-prometheus/values.yaml
+
+      destination:
+        server: "{{ server }}"
+        namespace: "observability"
+
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true

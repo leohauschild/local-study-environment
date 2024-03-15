@@ -35,3 +35,6 @@ spec:
         namespace: "kube-system" # The standard namespace kubeseal CLI will look for the controller
   syncPolicy:
     preserveResourcesOnDeletion: true
+    syncOptions:
+      syncOptions:
+        - CreateNamespace=true

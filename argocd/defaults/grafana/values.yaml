@@ -1,0 +1,33 @@
+persistence:
+  type: pvc
+  enabled: true
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  size: 2Gi
+
+admin:
+  existingSecret: "grafana-credentials"
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - name: mimir
+      type: prometheus
+      url: http://grafana-mimir-gateway.observability.svc.cluster.local/prometheus
+      access: proxy
+      isDefault: true
+      jsonData:
+        httpHeaderName1: X-Scope-OrgId
+      secureJsonData:
+        httpHeaderValue1: tools
+
+    - name: loki
+      type: loki
+      url: http://loki-stack-gateway
+      access: proxy
+
+sidecar:
+  dashboards:
+    enabled: true

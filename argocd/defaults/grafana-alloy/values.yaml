@@ -1,0 +1,79 @@
+config:
+  databases:
+    mimir: http://grafana-mimir-gateway.observability.svc.cluster.local
+    loki: http://loki-stack-gateway/loki/api/v1/push
+
+  environments:
+    tools:
+      tenant: tools
+      namespaces:
+        - kube-system
+        - argocd
+        - observability
+
+alloy:
+  configMap:
+    content: |-
+      discovery.kubernetes "tools_pods" {
+        role = "pod"
+
+        namespaces {
+          names = {{ toJson $.Values.config.environments.tools.namespaces }}
+        }
+      }
+
+      discovery.relabel "tools_pods" {
+        targets = discovery.kubernetes.tools_pods.targets
+
+        rule {
+          action = "replace"
+          source_labels = [
+            "__meta_kubernetes_namespace",
+          ]
+          target_label = "namespace"
+        }
+
+        rule {
+          action = "replace"
+          replacement = "$1"
+          separator = "/"
+          source_labels = [
+            "__meta_kubernetes_namespace",
+            "__meta_kubernetes_pod_container_name",
+          ]
+          target_label = "job"
+        }
+
+        rule {
+          action = "replace"
+          source_labels = [
+            "__meta_kubernetes_pod_container_name",
+          ]
+          target_label = "name"
+        }
+      }
+ 
+      loki.source.kubernetes "tools_pods" {
+        targets    = discovery.relabel.tools_pods.output
+        forward_to = [loki.write.tools.receiver]
+      }
+
+      loki.write "tools" {
+        endpoint {
+          url = "{{ $.Values.config.databases.loki }}"
+        }
+      }
+
+      mimir.rules.kubernetes "kube_prometheus" {
+        address   = "{{ $.Values.config.databases.mimir }}"
+        tenant_id = "{{ $.Values.config.environments.tools.tenant }}"
+      }
+
+      prometheus.remote_write "grafana_mimir" {
+          endpoint {
+              url = "{{ $.Values.config.databases.mimir }}"
+              headers = {
+                  "X-Scope-OrgID" = "{{ $.Values.config.environments.tools.tenant }}",
+              }
+          }
+      }
