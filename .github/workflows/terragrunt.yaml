@@ -1,6 +1,14 @@
 name: 'Terragrunt'
 on:
-  - pull_request
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - closed
+
+env:
+  tf_version: '1.5.7'
+  tg_version: '0.53.2'
 
 jobs:
   #https://github.com/dorny/paths-filter?tab=readme-ov-file#examples
@@ -11,15 +19,71 @@ jobs:
       pull-requests: read
       contents: read
 
+    outputs:
+      terragrunt_paths: ${{ steps.filter.outputs.terragrunt_files }}
+      terragrunt_true: ${{ steps.filter.outputs.terragrunt }}
+      terragrunt_paths_del: ${{ steps.filter.outputs.terragrunt_del_files }}
+      terragrunt_del: ${{ steps.filter.outputs.terragrunt_del }}
+
     steps:
       - name: check checkout
-        uses: actions/checkout@main
+        uses: actions/checkout@v4
 
       - name: check changes
         uses: dorny/paths-filter@v3
-        id: changes
+        id: filter
         with:
           list-files: json
           filters: |
             terragrunt:
-              - added|modified: '**'
+              - added|modified: '**/terragrunt.hcl'
+            terragrunt_del:
+              - deleted: '**/terragrunt.hcl'
+
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+
+      - name: Check terragrunt HCL
+        uses: gruntwork-io/terragrunt-action@v2
+        with:
+          tf_version: ${{ env.tf_version }}
+          tg_version: ${{ env.tg_version }}
+          tg_dir: "./"
+          tg_command: 'hclfmt --terragrunt-check --terragrunt-diff'
+
+  plan:
+    runs-on: ubuntu-latest
+    needs: [changes, checks]
+    if: ${{ needs.changes.outputs.terragrunt_true == 'true' }}
+    #concurrency: ${{ matrix.tg_file.file }}
+    strategy:
+      matrix:
+        terragrunt_path: ${{ fromJSON(needs.changes.outputs.terragrunt_paths) }}
+
+    env:
+      terragrunt_dir: ${{ matrix.terragrunt_path }}
+ 
+    #permissions:
+    #  contents: read
+    #  pull-requests: write
+
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+
+      - name: Terragrunt Work directory
+        id: terragrunt_dir
+        run: |
+          echo "tg_dir=$(dirname "$terragrunt_dir")" >> $GITHUB_OUTPUT
+
+      - name: Plan
+        uses: gruntwork-io/terragrunt-action@v2
+        with:
+          tf_version: ${{ env.tf_version }}
+          tg_version: ${{ env.tg_version }}
+          tg_dir: ${{ steps.terragrunt_dir.outputs.tg_dir }}
+          tg_command: 'plan'
+      
