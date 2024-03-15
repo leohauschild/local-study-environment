@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: grafana
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: "https://github.com/leohauschild/local-study-environment.git"
+        revision: "HEAD"
+        files:
+          - path: argocd/clusters/tools.yaml
+  template:
+    metadata:
+      name: grafana
+    spec:
+      project: tools
+
+      sources:
+        - repoURL: "https://github.com/leohauschild/local-study-environment.git"
+          targetRevision: "{{ revision }}"
+          ref: values
+
+        - repoURL: "https://grafana.github.io/helm-charts"
+          chart: "grafana"
+          targetRevision: 7.3.11
+          helm:
+            releaseName: grafana
+            valueFiles:
+              - $values/argocd/defaults/grafana/values.yaml
+
+        - repoURL: "https://github.com/leohauschild/local-study-environment.git"
+          targetRevision: "{{ revision }}"
+          path: argocd/defaults/grafana/manifests
+          directory:
+            recurse: true
+
+      destination:
+        server: "{{ server }}"
+        namespace: "observability"
+
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+
+

@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: mimir
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: "https://github.com/leohauschild/local-study-environment.git"
+        revision: "HEAD"
+        files:
+          - path: argocd/clusters/tools.yaml
+  template:
+    metadata:
+      name: "grafana-mimir"
+    spec:
+      project: tools
+
+      sources:
+        - repoURL: "https://github.com/leohauschild/local-study-environment.git"
+          targetRevision: "{{ revision }}"
+          ref: values
+
+        - repoURL: "https://grafana.github.io/helm-charts"
+          chart: "mimir-distributed"
+          targetRevision: 5.3.0
+          helm:
+            releaseName: grafana-mimir
+            valueFiles:
+              - $values/argocd/defaults/grafana-mimir/values.yaml
+
+      destination:
+        server: "{{ server }}"
+        namespace: "observability"
+
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
