@@ -3,7 +3,7 @@ include {
 }
 
 terraform {
-  source = "../../../tf-modules/kind-cluster/"
+  source = "/home/lhausch/my-repos/local-study-environment/infrastructure/tf-modules/kind-cluster/"
 }
 
 inputs = {
