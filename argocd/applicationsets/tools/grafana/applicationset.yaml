@@ -23,7 +23,7 @@ spec:
 
         - repoURL: "https://grafana.github.io/helm-charts"
           chart: "grafana"
-          targetRevision: 7.3.11
+          targetRevision: 9.2.10
           helm:
             releaseName: grafana
             valueFiles:
@@ -42,5 +42,3 @@ spec:
       syncPolicy:
         syncOptions:
           - CreateNamespace=true
-
-
